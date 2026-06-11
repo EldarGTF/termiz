@@ -19,7 +19,7 @@ docker load -i "$IMAGE_ARCHIVE"
 rm -f termiz-image.tar termiz-image.tar.gz
 
 echo "→ docker compose up"
-docker compose -f docker-compose.prod.yml up -d --remove-orphans
+docker compose -f docker-compose.prod.yml up -d --remove-orphans --force-recreate
 
 echo "→ cleanup"
 docker image prune -f

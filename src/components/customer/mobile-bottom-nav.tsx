@@ -39,6 +39,7 @@ export function MobileBottomNav() {
             <Link
               key={href}
               href={href}
+              prefetch={href === "/cart" ? false : undefined}
               className={cn(
                 "relative flex flex-1 flex-col items-center justify-center gap-0.5 rounded-xl transition-colors duration-200 active:scale-95",
                 active ? "text-primary" : "text-muted",

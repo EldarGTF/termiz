@@ -27,6 +27,7 @@ export function CustomerHeader() {
 
         <Link
           href="/cart"
+          prefetch={false}
           className={cn(
             "relative hidden items-center gap-2 rounded-2xl px-4 py-2 text-sm font-semibold transition-colors md:flex",
             "bg-primary text-white shadow-md shadow-primary/25 hover:bg-primary-hover",

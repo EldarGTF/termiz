@@ -52,6 +52,23 @@ export const DEFAULT_WORK_SCHEDULE: WorkDaySchedule[] = [
   { dayOfWeek: 6, isClosed: false, openTime: "10:00", closeTime: "22:00", lastOrderTime: "21:30" },
 ];
 
+export function getDefaultHoursInfo(): RestaurantHoursInfo {
+  return {
+    mode: "open",
+    acceptingOrders: true,
+    allowPreorders: true,
+    canOrder: true,
+    isManuallyClosed: false,
+    statusLabel: "Открыто",
+    statusDetail: "Можно оформить заказ",
+    lastOrderTimeToday: "21:30",
+    closeTimeToday: "22:00",
+    openTimeToday: "10:00",
+    scheduleSummary: buildScheduleSummary(DEFAULT_WORK_SCHEDULE),
+    preorderSlots: [],
+  };
+}
+
 export function parseWorkSchedule(raw: string | null | undefined): WorkDaySchedule[] {
   if (!raw) return DEFAULT_WORK_SCHEDULE;
   try {

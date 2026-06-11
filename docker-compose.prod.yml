@@ -2,6 +2,8 @@ services:
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
+    command: ["postgres", "-c", "shared_buffers=64MB", "-c", "max_connections=30"]
+    mem_limit: 256m
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-termiz}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
@@ -24,10 +26,12 @@ services:
         condition: service_healthy
     env_file: .env
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-termiz}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-termiz}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-termiz}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-termiz}?connection_limit=5
       NODE_ENV: production
+      NODE_OPTIONS: --max-old-space-size=384
       HOSTNAME: 0.0.0.0
       PORT: 3000
+    mem_limit: 512m
     ports:
       - "127.0.0.1:3000:3000"
 

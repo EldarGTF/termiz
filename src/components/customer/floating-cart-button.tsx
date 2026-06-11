@@ -27,6 +27,7 @@ export function FloatingCartButton() {
         >
           <Link
             href="/cart"
+            prefetch={false}
             className="flex items-center justify-between gap-4 rounded-3xl bg-primary px-6 py-4 text-white shadow-[var(--shadow-float)] hover:bg-primary-hover"
           >
             <span className="flex items-center gap-3 font-semibold">

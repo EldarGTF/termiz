@@ -38,3 +38,13 @@ export async function getRestaurantHours(slug = "termiz"): Promise<RestaurantHou
 
   return getRestaurantHoursInfo(restaurant);
 }
+
+export async function getRestaurantStatus(slug = "termiz") {
+  const restaurant = await getRestaurantInfo(slug);
+  if (!restaurant) return null;
+
+  return {
+    minOrder: restaurant.minOrder,
+    hours: getRestaurantHoursInfo(restaurant),
+  };
+}
