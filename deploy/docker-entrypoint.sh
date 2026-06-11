@@ -27,4 +27,7 @@ if [ "${RUN_SEED:-0}" = "1" ]; then
 fi
 
 echo "→ start app on :${PORT:-3000}"
+if [ "$#" -eq 0 ]; then
+  set -- node server.js
+fi
 exec "$@"

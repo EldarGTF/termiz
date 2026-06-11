@@ -21,6 +21,7 @@ services:
     image: termiz:latest
     restart: unless-stopped
     entrypoint: ["sh", "docker-entrypoint.sh"]
+    command: ["node", "server.js"]
     depends_on:
       postgres:
         condition: service_healthy
