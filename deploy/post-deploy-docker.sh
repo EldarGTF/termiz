@@ -24,5 +24,13 @@ docker compose -f docker-compose.prod.yml up -d --remove-orphans
 echo "→ cleanup"
 docker image prune -f
 
+if command -v nginx >/dev/null && [[ -f deploy/nginx-termiz.conf ]]; then
+  echo "→ nginx"
+  cp deploy/nginx-termiz.conf /etc/nginx/sites-available/termiz
+  ln -sf /etc/nginx/sites-available/termiz /etc/nginx/sites-enabled/termiz
+  rm -f /etc/nginx/sites-enabled/default
+  nginx -t && systemctl reload nginx
+fi
+
 echo "✓ Docker deploy finished"
 docker compose -f docker-compose.prod.yml ps
