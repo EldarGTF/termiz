@@ -2,6 +2,8 @@ import { getRestaurantHours, getRestaurantInfo } from "@/actions/restaurant";
 import { CartPageClient } from "@/components/customer/cart-page-client";
 import { notFound } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 export default async function CartPage() {
   const [restaurant, hours] = await Promise.all([
     getRestaurantInfo(),

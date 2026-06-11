@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { getRestaurantHours } from "@/actions/restaurant";
 import { CheckoutForm } from "@/components/customer/checkout-form";
 
+export const dynamic = "force-dynamic";
+
 export default async function CheckoutPage() {
   const [restaurant, hours] = await Promise.all([
     prisma.restaurant.findUnique({

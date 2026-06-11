@@ -7,6 +7,8 @@ import { MenuItemCard } from "@/components/customer/menu-item-card";
 import { FloatingCartButton } from "@/components/customer/floating-cart-button";
 import { notFound } from "next/navigation";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   const [restaurant, hours] = await Promise.all([
     getRestaurantMenu("termiz"),

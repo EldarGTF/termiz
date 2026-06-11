@@ -11,6 +11,8 @@ RUN npm ci
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+# Сборка без реальной БД — страницы с данными помечены dynamic
+ENV DATABASE_URL="postgresql://build:build@127.0.0.1:5432/build"
 RUN npx prisma generate
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
