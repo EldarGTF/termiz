@@ -18,6 +18,7 @@ COPY deploy/docker-entrypoint.sh ./docker-entrypoint.sh
 
 RUN npm install --no-save prisma@6.19.3 tsx@4.22.4 bcryptjs@3.0.3 \
   && npx prisma generate \
+  && sed -i 's/\r$//' docker-entrypoint.sh \
   && chmod +x docker-entrypoint.sh
 
 EXPOSE 3000
