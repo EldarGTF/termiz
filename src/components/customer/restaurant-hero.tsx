@@ -61,7 +61,7 @@ export function RestaurantHero({
             {description}
           </p>
 
-          <div className="mt-4 grid grid-cols-3 gap-2 md:mt-6 md:flex md:flex-wrap md:gap-3">
+          <div className="mt-4 grid grid-cols-3 gap-2.5 md:mt-6 md:flex md:flex-wrap md:gap-4">
             {[
               { icon: Star, label: rating.toFixed(1), sub: "рейтинг" },
               { icon: Clock, label: `${deliveryTime} мин`, sub: "доставка" },
@@ -69,12 +69,12 @@ export function RestaurantHero({
             ].map(({ icon: Icon, label, sub }) => (
               <div
                 key={sub}
-                className="flex flex-col items-center rounded-2xl bg-white/15 px-2 py-2.5 backdrop-blur-md md:flex-row md:gap-3 md:px-4 md:py-3"
+                className="flex flex-col items-center rounded-2xl bg-white/15 px-3 py-3 backdrop-blur-md md:flex-row md:gap-3 md:px-5 md:py-3.5"
               >
-                <Icon className="mb-1 h-4 w-4 text-white md:mb-0 md:h-5 md:w-5" />
+                <Icon className="mb-1.5 h-5 w-5 text-white md:mb-0 md:h-6 md:w-6" />
                 <div className="text-center md:text-left">
-                  <p className="text-xs font-bold text-white md:text-sm">{label}</p>
-                  <p className="text-[10px] text-white/70 md:text-xs">{sub}</p>
+                  <p className="text-sm font-bold text-white md:text-base">{label}</p>
+                  <p className="text-xs text-white/70 md:text-sm">{sub}</p>
                 </div>
               </div>
             ))}
