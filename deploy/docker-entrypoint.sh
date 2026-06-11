@@ -17,7 +17,13 @@ done
 
 if [ "${RUN_SEED:-0}" = "1" ]; then
   echo "→ seed database"
-  npx tsx prisma/seed.ts || echo "seed skipped or failed"
+  set +e
+  npx --yes tsx prisma/seed.ts
+  SEED_EXIT=$?
+  set -e
+  if [ "$SEED_EXIT" -ne 0 ]; then
+    echo "seed finished with code $SEED_EXIT (continuing startup)"
+  fi
 fi
 
 echo "→ start app on :${PORT:-3000}"
