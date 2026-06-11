@@ -31,7 +31,11 @@ jobs:
         run: docker build -t termiz:latest .
 
       - name: Save image
-        run: docker save termiz:latest -o termiz-image.tar
+        run: |
+          docker save termiz:latest -o termiz-image.tar
+          sudo chown "$USER:$USER" termiz-image.tar
+          chmod 644 termiz-image.tar
+          ls -la termiz-image.tar
 
       - name: Upload to VPS
         uses: appleboy/scp-action@v0.1.7
