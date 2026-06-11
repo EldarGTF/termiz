@@ -22,5 +22,5 @@ RUN npm install --no-save prisma@6.19.3 tsx@4.22.4 bcryptjs@3.0.3 \
   && chmod +x docker-entrypoint.sh
 
 EXPOSE 3000
-ENTRYPOINT ["./docker-entrypoint.sh"]
+ENTRYPOINT ["sh", "docker-entrypoint.sh"]
 CMD ["node", "server.js"]
