@@ -23,8 +23,16 @@ if ($SshKey -and (Test-Path $SshKey)) {
 }
 
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-  Write-Error "Нужен Docker Desktop. Соберите образ локально или используйте GitHub Actions."
+  Write-Error "Нужен Docker Desktop. Или используйте GitHub Actions."
 }
+
+Write-Host "→ Next.js build..." -ForegroundColor Cyan
+$env:DATABASE_URL = "postgresql://build:build@127.0.0.1:5432/build"
+$env:AUTH_SECRET = "local-build-secret"
+$env:NEXTAUTH_URL = "http://localhost:3000"
+npm ci
+npx prisma generate
+npm run build
 
 Write-Host "→ Docker build..." -ForegroundColor Cyan
 docker build -t termiz:latest .

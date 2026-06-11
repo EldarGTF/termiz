@@ -12,6 +12,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install and build Next.js
+        env:
+          DATABASE_URL: postgresql://build:build@127.0.0.1:5432/build
+          AUTH_SECRET: ci-build-secret
+          NEXTAUTH_URL: http://localhost:3000
+        run: |
+          npm ci
+          npx prisma generate
+          npm run build
+
       - name: Build Docker image
         run: docker build -t termiz:latest .
 
