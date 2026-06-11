@@ -1,0 +1,223 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CUSTOMER
+  RESTAURANT_OWNER
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  READY
+  DELIVERING
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID_STUB
+  FAILED
+}
+
+enum PromoDiscountType {
+  PERCENT
+  FIXED
+}
+
+enum OrderType {
+  DELIVERY
+  PICKUP
+}
+
+model User {
+  id                String             @id @default(cuid())
+  email             String             @unique
+  passwordHash      String
+  name              String
+  role              Role               @default(CUSTOMER)
+  restaurant        Restaurant?
+  orders            Order[]
+  addresses         Address[]
+  pushSubscriptions PushSubscription[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+}
+
+model Restaurant {
+  id           String         @id @default(cuid())
+  slug         String         @unique @default("termiz")
+  name         String
+  description  String
+  rating       Float          @default(4.8)
+  deliveryTime Int            @default(35)
+  pickupTime   Int            @default(15)
+  minOrder               Int            @default(500)
+  isOpen                 Boolean        @default(true)
+  allowPreorders         Boolean        @default(true)
+  lastOrderLeadMinutes   Int            @default(30)
+  timezone               String         @default("Asia/Almaty")
+  workSchedule           String?
+  ownerId                String         @unique
+  owner        User           @relation(fields: [ownerId], references: [id])
+  categories   MenuCategory[]
+  orders       Order[]
+  promoCodes   PromoCode[]
+  pickupLocations PickupLocation[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
+model MenuCategory {
+  id           String     @id @default(cuid())
+  name         String
+  sortOrder    Int        @default(0)
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  items        MenuItem[]
+}
+
+model MenuItem {
+  id          String       @id @default(cuid())
+  name        String
+  description String
+  price       Int
+  imageUrl    String?
+  isAvailable Boolean      @default(true)
+  sortOrder   Int          @default(0)
+  categoryId  String
+  category    MenuCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  orderItems  OrderItem[]
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  name      String
+  phone     String   @unique
+  orders    Order[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PromoCode {
+  id            String            @id @default(cuid())
+  code          String            @unique
+  discountType  PromoDiscountType
+  discountValue Int
+  minOrder      Int               @default(0)
+  maxUses       Int?
+  usedCount     Int               @default(0)
+  isActive      Boolean           @default(true)
+  expiresAt     DateTime?
+  restaurantId  String
+  restaurant    Restaurant        @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  orders        Order[]
+  createdAt     DateTime          @default(now())
+}
+
+model PickupLocation {
+  id           String     @id @default(cuid())
+  name         String
+  address      String
+  sortOrder    Int        @default(0)
+  isActive     Boolean    @default(true)
+  restaurantId String
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  orders       Order[]
+}
+
+model Address {
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  street    String
+  apartment String?
+  comment   String?
+  isDefault Boolean @default(false)
+  orders    Order[]
+}
+
+model Order {
+  id                String               @id @default(cuid())
+  orderNumber       Int                  @unique
+  userId            String?
+  user              User?                @relation(fields: [userId], references: [id])
+  customerId        String?
+  customer          Customer?            @relation(fields: [customerId], references: [id])
+  guestName         String?
+  guestPhone        String?
+  orderType         OrderType            @default(DELIVERY)
+  restaurantId      String
+  restaurant        Restaurant           @relation(fields: [restaurantId], references: [id])
+  addressId         String?
+  address           Address?             @relation(fields: [addressId], references: [id])
+  pickupLocationId  String?
+  pickupLocation    PickupLocation?      @relation(fields: [pickupLocationId], references: [id])
+  deliveryStreet    String
+  deliveryApartment String?
+  deliveryComment   String?
+  status            OrderStatus          @default(PENDING)
+  paymentStatus     PaymentStatus        @default(PENDING)
+  subtotalAmount    Int                  @default(0)
+  discountAmount    Int                  @default(0)
+  promoCodeId       String?
+  promoCode         PromoCode?           @relation(fields: [promoCodeId], references: [id])
+  promoCodeText     String?
+  totalAmount       Int
+  comment           String?
+  etaMinutes        Int?
+  isPreorder        Boolean              @default(false)
+  scheduledFor      DateTime?
+  items             OrderItem[]
+  statusHistory     OrderStatusHistory[]
+  pushSubscriptions OrderPushSubscription[]
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+}
+
+model OrderItem {
+  id         String   @id @default(cuid())
+  orderId    String
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItemId String
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+  quantity   Int
+  price      Int
+  name       String
+}
+
+model OrderStatusHistory {
+  id        String      @id @default(cuid())
+  orderId   String
+  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  status    OrderStatus
+  createdAt DateTime    @default(now())
+}
+
+model OrderPushSubscription {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+}

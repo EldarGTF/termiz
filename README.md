@@ -1,36 +1,100 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Termiz — доставка еды
 
-## Getting Started
+Веб-приложение + PWA для заказа еды из ресторана Termiz. Клиенты заказывают без регистрации; панель ресторана — для управления меню и заказами.
 
-First, run the development server:
+## Стек
+
+- Next.js 16, TypeScript, Tailwind CSS
+- Prisma + SQLite (локально) / PostgreSQL (production через Docker)
+- Auth.js (next-auth v5) — только для партнёров
+- Framer Motion, Zustand
+- SSE для трекинга заказов, Web Push
+
+## Быстрый старт
 
 ```bash
+npm install
+docker compose up -d
+cp .env.example .env
+npm run db:push
+npm run db:seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Откройте [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Аккаунт партнёра
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Email | Пароль |
+|-------|--------|
+| partner@test.ru | password123 |
 
-## Learn More
+Клиентам регистрация не нужна — достаточно указать имя и телефон при оформлении. Заказы можно найти по телефону на `/orders`.
 
-To learn more about Next.js, take a look at the following resources:
+### Промокоды (демо)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Код | Скидка |
+|-----|--------|
+| TERMIZ10 | 10% |
+| WELCOME500 | 500 ₸ |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Самовывоз
 
-## Deploy on Vercel
+Два пункта: ул. Катаева, 66 и пр. Назарбаева, 48/3 — выбираются при оформлении.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Маршруты
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| URL | Описание |
+|-----|----------|
+| `/` | Меню ресторана (главная) |
+| `/cart` | Корзина, промокод, минимальная сумма |
+| `/checkout` | Оформление: доставка или самовывоз |
+| `/orders` | Поиск заказов по телефону |
+| `/orders/[id]` | Отслеживание заказа + push-уведомления |
+| `/login` | Вход для партнёров |
+| `/partner/dashboard` | Панель ресторана |
+| `/partner/menu` | Управление меню (цены, фото, доступность) |
+| `/partner/orders` | Входящие заказы |
+| `/partner/promos` | Промокоды |
+| `/partner/settings` | Настройки, график работы, пункты самовывоза |
+
+### График и предзаказы
+
+В настройках партнёра можно задать часы работы по дням, время последнего заказа и приём предзаказов вне рабочего времени.
+
+## Деплой на VPS (Docker)
+
+Подробно: [deploy/README.md](deploy/README.md)
+
+```powershell
+# 1. VPS: bash deploy/server-setup-docker.sh
+# 2. Создать /var/www/termiz/.env (deploy/env.docker.example)
+# 3. С ПК (Docker Desktop + SSH-ключ):
+npm run deploy:docker
+```
+
+## Локальная БД (PostgreSQL)
+
+```bash
+docker compose up -d
+cp .env.example .env
+npm run db:push
+npm run db:seed
+npm run dev
+```
+
+## Тесты
+
+```bash
+npx playwright install chromium
+npm run test:e2e
+```
+
+## PWA
+
+Приложение поддерживает установку на телефон через manifest и service worker (`/sw.js`). На главной появляется баннер «Установить», если браузер поддерживает `beforeinstallprompt`.
+
+## Дизайн
+
+- Цвета: белый + оранжевый (`#FF6B00`)
+- Design system: `design-system/MASTER.md`

@@ -1,0 +1,18 @@
+{
+  "name": "Termiz — Фастфуд",
+  "short_name": "Termiz",
+  "description": "Донеры, пита, бургеры и хот-доги с доставкой",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFAF7",
+  "theme_color": "#FF6B00",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
